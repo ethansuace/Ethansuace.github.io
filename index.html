@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Basic Website with Chat</title>
+    <title>Advanced Chat AI</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -129,6 +129,10 @@
             const userInput = document.getElementById('userInput');
             const messages = document.getElementById('messages');
 
+            let userName = '';
+            let previousMessage = '';
+            let context = {};
+
             sendBtn.addEventListener('click', () => {
                 const userMessage = userInput.value;
                 if (userMessage.trim() !== "") {
@@ -152,15 +156,55 @@
             }
 
             function simulateResponse(userMessage) {
-                let response = "I'm not sure how to respond to that.";
-                if (userMessage.toLowerCase().includes("hello")) {
-                    response = "Hello! How can I assist you today?";
-                } else if (userMessage.toLowerCase().includes("how are you")) {
-                    response = "I'm just a program, but thanks for asking!";
-                } else if (userMessage.toLowerCase().includes("services")) {
-                    response = "We offer various services including web development and design.";
-                }
+                const response = getResponse(userMessage);
                 addMessage('AI: ' + response);
+            }
+
+            function getResponse(userMessage) {
+                const lowerCaseMessage = userMessage.toLowerCase();
+
+                // Knowledge base
+                const knowledgeBase = {
+                    "greeting": ["Hello! How can I assist you today?", "Hi there! What can I do for you?", "Greetings! How may I help you?"],
+                    "how are you": ["I'm just a program, but thanks for asking!", "Doing well! How about you?"],
+                    "services": ["We offer web development, design, and consulting services.", "Our services include UI/UX design and full-stack development."],
+                    "goodbye": ["Goodbye! Have a great day!", "See you later! Take care!"],
+                    "name": (name) => `Nice to meet you, ${name}!`,
+                    "questions": {
+                        "what is your name?": "I'm a virtual assistant here to help you!",
+                        "what do you do?": "I can answer questions, provide information, and help you navigate our services.",
+                        "how can I contact you?": "You can reach us through the contact form on this website.",
+                        "tell me about your company": "We are a leading provider of digital solutions tailored to meet your needs."
+                    }
+                };
+
+                // Determine response
+                if (lowerCaseMessage.includes("my name is")) {
+                    userName = extractName(lowerCaseMessage);
+                    return knowledgeBase.name(userName);
+                }
+
+                for (const [key, responses] of Object.entries(knowledgeBase)) {
+                    if (typeof responses === 'object' && responses !== null && responses.questions) {
+                        const questionResponse = responses.questions[lowerCaseMessage];
+                        if (questionResponse) {
+                            return questionResponse;
+                        }
+                    } else if (lowerCaseMessage.includes(key)) {
+                        return getRandomResponse(responses);
+                    }
+                }
+
+                return getRandomResponse(["I'm not quite sure what you mean. Could you clarify?", "Can you provide more details?", "Let's talk about something else."]);
+            }
+
+            function extractName(message) {
+                const match = message.match(/my name is ([a-zA-Z]+)/);
+                return match ? match[1] : '';
+            }
+
+            function getRandomResponse(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
             }
         });
     </script>
