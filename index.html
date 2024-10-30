@@ -3,8 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Basic Website</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>My Basic Website with Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        section {
+            padding: 2rem;
+        }
+
+        #chatbox {
+            border: 1px solid #007bff;
+            padding: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        #messages {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+        }
+
+        #userInput {
+            width: calc(100% - 80px);
+            padding: 0.5rem;
+        }
+
+        #sendBtn {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -41,12 +108,61 @@
                 <input type="submit" value="Submit">
             </form>
         </section>
+
+        <section id="chat">
+            <h2>Chat with Us</h2>
+            <div id="chatbox">
+                <div id="messages"></div>
+                <input type="text" id="userInput" placeholder="Ask a question..." />
+                <button id="sendBtn">Send</button>
+            </div>
+        </section>
     </main>
     
     <footer>
         <p>&copy; 2024 My Basic Website</p>
     </footer>
-    
-    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sendBtn = document.getElementById('sendBtn');
+            const userInput = document.getElementById('userInput');
+            const messages = document.getElementById('messages');
+
+            sendBtn.addEventListener('click', () => {
+                const userMessage = userInput.value;
+                if (userMessage.trim() !== "") {
+                    addMessage('You: ' + userMessage);
+                    userInput.value = '';
+                    simulateResponse(userMessage);
+                }
+            });
+
+            userInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    sendBtn.click();
+                }
+            });
+
+            function addMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.textContent = message;
+                messages.appendChild(messageDiv);
+                messages.scrollTop = messages.scrollHeight; // Scroll to the bottom
+            }
+
+            function simulateResponse(userMessage) {
+                let response = "I'm not sure how to respond to that.";
+                if (userMessage.toLowerCase().includes("hello")) {
+                    response = "Hello! How can I assist you today?";
+                } else if (userMessage.toLowerCase().includes("how are you")) {
+                    response = "I'm just a program, but thanks for asking!";
+                } else if (userMessage.toLowerCase().includes("services")) {
+                    response = "We offer various services including web development and design.";
+                }
+                addMessage('AI: ' + response);
+            }
+        });
+    </script>
 </body>
 </html>
